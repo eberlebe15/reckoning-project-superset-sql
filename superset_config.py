@@ -21,6 +21,5 @@ WTF_CSRF_ENABLED = False
 
 # Branding
 LOGO_TARGET_PATH = 'https://sites.lsa.umich.edu/dcc-project/the-reckoning-project/'
-APP_ICON = 'TheReckoningProject_logo.png'
 APP_NAME = 'The Reckoing Project'
 WELCOME_MESSAGE = 'Welcome!'
