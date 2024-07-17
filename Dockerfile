@@ -2,7 +2,7 @@ FROM apache/superset:2.1.0
 
 USER root
 
-RUN pip install pyathena
+RUN pip install -r requirements.txt
 
 COPY /logo /app
 COPY superset_config.py /app/superset_config.py

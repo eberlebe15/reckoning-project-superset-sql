@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Initialize the database
 superset db upgrade
@@ -6,13 +7,13 @@ superset db upgrade
 # set flask app
 export FLASK_APP=superset
 
-# Create an admin user (you will be prompted to set a username, first and last name before setting a password)
+# Create an admin user
 superset fab create-admin \
-              --username admin \
-              --firstname Ben \
-              --lastname Eberle \
-              --email eberlebe@umich.edu \
-              --password CarceralState_Wolverines00
+    --username "$ADMIN_USERNAME" \
+    --firstname "$ADMIN_FIRSTNAME" \
+    --lastname "$ADMIN_LASTNAME" \
+    --email "$ADMIN_EMAIL" \
+    --password "$ADMIN_PASSWORD"
 
 # Create default roles and permissions
 superset init
