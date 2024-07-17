@@ -1,8 +1,9 @@
 # ---------------------------------------------------------
 # Superset specific config
 # ---------------------------------------------------------
+import json
 import boto3
-from botocore.exceptions import ClientError
+from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 
 def get_secret(secret_name, region_name):
     # Create a Secrets Manager client
