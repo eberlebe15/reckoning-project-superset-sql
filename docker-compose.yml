@@ -9,11 +9,6 @@ services:
       - superset_home:/app/superset_home
     command: 
       - ./superset-init.sh
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8088/health"]
-      interval: 1m30s
-      timeout: 10s
-      retries: 3
 
 volumes:
   superset_home:
