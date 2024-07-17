@@ -7,7 +7,7 @@ superset db upgrade
 # set flask app
 export FLASK_APP=superset
 
-# Create an admin user
+# Create an admin user (you will be prompted to set a username, first and last name before setting a password)
 superset fab create-admin \
     --username "$ADMIN_USERNAME" \
     --firstname "$ADMIN_FIRSTNAME" \

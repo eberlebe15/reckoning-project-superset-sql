@@ -4,11 +4,7 @@
 import boto3
 from botocore.exceptions import ClientError
 
-
 def get_secret(secret_name, region_name):
-
-    region_name = 'us-east-1'
-
     # Create a Secrets Manager client
     session = boto3.session.Session()
     client = session.client(
@@ -20,16 +16,33 @@ def get_secret(secret_name, region_name):
         get_secret_value_response = client.get_secret_value(
             SecretId=secret_name
         )
-    except ClientError as e:
-        # For a list of exceptions thrown, see
-        # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
+    except (NoCredentialsError, PartialCredentialsError) as e:
+        raise RuntimeError(f"AWS credentials error: {str(e)}")
+    except client.exceptions.ResourceNotFoundException:
+        raise RuntimeError(f"Secret {secret_name} not found")
+    except client.exceptions.ClientError as e:
         raise e
 
+    # Decrypts secret using the associated KMS key.
     secret = get_secret_value_response['SecretString']
-    return secret
+    
+    # Add debugging output
+    print(f"Fetched secret: {secret}")
 
-# Example usage
-SECRET_KEY = get_secret('superset_secret_key', 'us-east-1')
+    # Ensure we return the parsed JSON
+    return json.loads(secret)
+
+# Fetch the general secret
+general_secret = get_secret('superset_secret_key', 'us-east-1')
+SECRET_KEY = general_secret['SECRET_KEY']
+
+# Fetch admin user details from AWS Secrets Manager
+admin_secrets = get_secret('superset_admin_config', 'us-east-1')
+ADMIN_USERNAME = admin_secrets['admin_username']
+ADMIN_FIRSTNAME = admin_secrets['admin_firstname']
+ADMIN_LASTNAME = admin_secrets['admin_lastname']
+ADMIN_EMAIL = admin_secrets['admin_email']
+ADMIN_PASSWORD = admin_secrets['admin_password']
 
 # Set row limit for improved performance
 ROW_LIMIT = 5000
@@ -51,18 +64,3 @@ LOGO_TARGET_PATH = 'https://sites.lsa.umich.edu/dcc-project/the-reckoning-projec
 APP_NAME = 'The Reckoing Project'
 APP_LOGO = 'app/logo/TheReckoningProject_logo.png'
 WELCOME_MESSAGE = 'Welcome!'
-
-# Fetch admin user details from AWS Secrets Manager
-admin_secrets = get_secret('superset_admin_config')
-
-# Ensure all required admin secrets are available
-required_admin_keys = ['admin_username', 'admin_firstname', 'admin_lastname', 'admin_email', 'admin_password']
-missing_keys = [key for key in required_admin_keys if key not in admin_secrets]
-if missing_keys:
-    raise RuntimeError(f"Missing required admin secrets: {', '.join(missing_keys)}")
-
-ADMIN_USERNAME = admin_secrets['admin_username']
-ADMIN_FIRSTNAME = admin_secrets['admin_firstname']
-ADMIN_LASTNAME = admin_secrets['admin_lastname']
-ADMIN_EMAIL = admin_secrets['admin_email']
-ADMIN_PASSWORD = admin_secrets['admin_password']
