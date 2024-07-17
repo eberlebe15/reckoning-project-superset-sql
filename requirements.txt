@@ -1,3 +1,2 @@
 pyathena
 boto3
-json
