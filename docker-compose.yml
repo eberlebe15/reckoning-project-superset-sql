@@ -15,15 +15,6 @@ services:
       timeout: 10s
       retries: 3
 
-  superset-db:
-    image: postgres:latest
-    environment:
-      POSTGRES_USER: superset_user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: superset_db
-    volumes:
-      - superset_db_data:/var/lib/postgresql/data
-
 volumes:
   superset_home:
   superset_db_data:
