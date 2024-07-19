@@ -33,17 +33,27 @@ def get_secret(secret_name, region_name):
     # Ensure we return the parsed JSON
     return json.loads(secret)
 
-# Fetch the general secret
-general_secret = get_secret('superset_secret_key', 'us-east-1')
-SECRET_KEY = general_secret['SECRET_KEY']
+superset_metadata_config = get_secret('superset_metadata_config', 'us-east-1')
+superset_metadata_username = superset_metadata_config['username']
+superset_metadata_password = superset_metadata_config['password']
+superset_metadata_host = superset_metadata_config['host']
+superset_metadata_port = superset_metadata_config['port']
+superset_metadata_name = superset_metadata_config['dbInstanceIdentifier']
 
+# Construct the SQLAlchemy connection string for MySQL
+SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{superset_metadata_username}:{superset_metadata_password}@{superset_metadata_host}:{superset_metadata_port}/{superset_metadata_name}"
+
+
+# Fetch the general secret
+SECRET_KEY = get_secret('superset_secret_key', 'us-east-1')
+ 
 # Fetch admin user details from AWS Secrets Manager
 admin_secrets = get_secret('superset_admin_config', 'us-east-1')
-ADMIN_USERNAME = admin_secrets['admin_username']
-ADMIN_FIRSTNAME = admin_secrets['admin_firstname']
-ADMIN_LASTNAME = admin_secrets['admin_lastname']
-ADMIN_EMAIL = admin_secrets['admin_email']
-ADMIN_PASSWORD = admin_secrets['admin_password']
+ADMIN_USERNAME = admin_secrets['superset_admin_username']
+ADMIN_FIRSTNAME = admin_secrets['superset_admin_firstname']
+ADMIN_LASTNAME = admin_secrets['superset_admin_lastname']
+ADMIN_EMAIL = admin_secrets['superset_admin_email']
+ADMIN_PASSWORD = admin_secrets['superset_admin_password']
 
 # Set row limit for improved performance
 ROW_LIMIT = 5000
