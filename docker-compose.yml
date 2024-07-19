@@ -17,4 +17,3 @@ services:
 
 volumes:
   superset_home:
-  superset_db_data:
