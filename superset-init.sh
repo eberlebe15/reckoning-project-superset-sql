@@ -8,7 +8,7 @@ superset db upgrade
 export FLASK_APP=superset
 
 # Create an admin user (you will be prompted to set a username, first and last name before setting a password)
-if [ $(superset fab list-users | grep -c admin) -eq 0 ]; then
+if [ $(superset fab list-users | grep -c reckoning_admin) -eq 0 ]; then
     superset fab create-admin \
         --username "$ADMIN_USERNAME" \
         --firstname "$ADMIN_FIRSTNAME" \
