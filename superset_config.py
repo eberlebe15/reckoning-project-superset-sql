@@ -5,8 +5,14 @@ import logging
 from logging.handlers import TimedRotatingFileHandler
 import json
 import boto3
+import os
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError
-# from cachelib.redis import RedisCache
+from cachelib.redis import RedisCache
+
+# Ensure the log directory exists
+log_dir = '/var/log/superset'
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir)
 
 # Configure Logging
 LOG_FORMAT = "%(asctime)s %(levelname)s %(name)s %(message)s"
@@ -15,7 +21,7 @@ logging.basicConfig(
     format=LOG_FORMAT,
     handlers=[
         TimedRotatingFileHandler(
-            "/var/log/superset/superset.log",
+            os.path.join(log_dir, 'superset.log'),
             when="midnight",
             backupCount=30
         )
@@ -93,6 +99,9 @@ ALLOW_ADHOC_SUBQUERY=True
 # Production Mode
 WTF_CSRF_ENABLED = True
 
+# Configure Flask-AppBuilder
+ENABLE_TIME_ROTATE = True
+
 # Configure Redis Cache
 CACHE_CONFIG = {
     'CACHE_TYPE': 'RedisCache',
@@ -105,6 +114,7 @@ CACHE_CONFIG = {
 }
 
 DATA_CACHE_CONFIG = CACHE_CONFIG
+RESULTS_BACKEND = CACHE_CONFIG
 
 # Branding
 LOGO_TARGET_PATH = 'https://sites.lsa.umich.edu/dcc-project/the-reckoning-project/'
