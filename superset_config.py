@@ -1,10 +1,28 @@
 # ---------------------------------------------------------
 # Superset specific config
 # ---------------------------------------------------------
+import logging
+from logging.handlers import TimedRotatingFileHandler
 import json
 import boto3
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError
+# from cachelib.redis import RedisCache
 
+# Configure Logging
+LOG_FORMAT = "%(asctime)s %(levelname)s %(name)s %(message)s"
+logging.basicConfig(
+    level=logging.INFO,
+    format=LOG_FORMAT,
+    handlers=[
+        TimedRotatingFileHandler(
+            "/var/log/superset/superset.log",
+            when="midnight",
+            backupCount=30
+        )
+    ]
+)
+
+# AWS Secret Manager get_secret function
 def get_secret(secret_name, region_name):
     # Create a Secrets Manager client
     session = boto3.session.Session()
@@ -43,6 +61,8 @@ superset_metadata_name = superset_metadata_config['dbInstanceIdentifier']
 # Construct the SQLAlchemy connection string for MySQL
 SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{superset_metadata_username}:{superset_metadata_password}@{superset_metadata_host}:{superset_metadata_port}/{superset_metadata_name}"
 
+# # Rotate previous secret key
+# PREVIOUS_SECRET_KEY = get_secret('superset_old_secret_key', 'us-east-1')
 
 # Fetch the general secret
 SECRET_KEY = get_secret('superset_secret_key', 'us-east-1')
@@ -69,6 +89,22 @@ WTF_CSRF_ENABLED = False
 
 # Allow ADHOC Subqueries
 ALLOW_ADHOC_SUBQUERY=True
+
+# # Production Mode
+# WTF_CSRF_ENABLED = True
+
+# # Configure Redis Cache
+# CACHE_CONFIG = {
+#     'CACHE_TYPE': 'RedisCache',
+#     'CACHE_DEFAULT_TIMEOUT': 300,
+#     'CACHE_KEY_PREFIX': 'superset_',
+#     'CACHE_REDIS_HOST': 'redis',
+#     'CACHE_REDIS_PORT': 6379,
+#     'CACHE_REDIS_DB': 0,
+#     'CACHE_REDIS_URL': None,
+# }
+
+# DATA_CACHE_CONFIG = CACHE_CONFIG
 
 # Branding
 LOGO_TARGET_PATH = 'https://sites.lsa.umich.edu/dcc-project/the-reckoning-project/'
