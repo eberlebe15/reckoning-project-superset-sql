@@ -15,5 +15,11 @@ services:
       timeout: 10s
       retries: 3
 
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+
 volumes:
   superset_home:
