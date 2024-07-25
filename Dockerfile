@@ -5,6 +5,10 @@ USER root
 # Install AWS CLI and jq
 RUN apt-get update && apt-get install -y awscli jq
 
+# Create the log directory and set permissions
+RUN mkdir -p /var/log/superset && \
+    chown -R superset:superset /var/log/superset
+
 # Copy requirements.txt
 COPY requirements.txt /app/requirements.txt
 
