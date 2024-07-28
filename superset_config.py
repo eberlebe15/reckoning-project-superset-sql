@@ -66,14 +66,14 @@ superset_metadata_name = superset_metadata_config['dbInstanceIdentifier']
 SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{superset_metadata_username}:{superset_metadata_password}@{superset_metadata_host}:{superset_metadata_port}/{superset_metadata_name}"
 
 # Rotate previous secret key
-previous_key = get_secret('superset_old_secret_key', 'us-east-1')
-decoded_previous_key = base64.b64decode(previous_key).decode('utf-8')
-PREVIOUS_SECRET_KEY = json.loads(decoded_previous_key)
+PREVIOUS_SECRET_KEY = get_secret('superset_old_secret_key', 'us-east-1')
 
 # Fetch the general secret
-secrey_key = get_secret('superset_secret_key', 'us-east-1')
-decoded_secret_key = base64.b64decode(secrey_key).decode('utf-8')
-SECRET_KEY = json.loads(decoded_secret_key)
+SECRET_KEY = get_secret('superset_secret_key', 'us-east-1')
+
+# Handle binary secret
+decoded_secret = base64.b64decode(secret_string).decode('utf-8')
+secret_data = json.loads(decoded_secret)
  
 # Fetch admin user details from AWS Secrets Manager
 admin_secrets = get_secret('superset_admin_config', 'us-east-1')
