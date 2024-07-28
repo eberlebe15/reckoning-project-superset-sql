@@ -1,6 +1,8 @@
-FROM apache/superset:2.1.0
+FROM apache/superset:4.0.2
 
 USER root
+
+ENV SUPERSET_CONFIG_PATH /app/superset_config.py
 
 # Install AWS CLI and jq
 RUN apt-get update && apt-get install -y awscli jq
