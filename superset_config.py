@@ -50,9 +50,6 @@ def get_secret(secret_name, region_name):
 
     # Decrypts secret using the associated KMS key.
     secret = get_secret_value_response['SecretString']
-    
-    # Add debugging output
-    print(f"Fetched secret: {secret}")
 
     # Ensure we return the parsed JSON
     return json.loads(secret)
